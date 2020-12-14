@@ -53,7 +53,7 @@ void loop()
 {
     currentWaterLevel = ultrasonic.Ranging(CM);
     Serial.println(currentWaterLevel);
-    if (currentWaterLevel <= MIN_WATER_LEVEL)
+    if (currentWaterLevel >= MIN_WATER_LEVEL && currentWaterLevel>MAX_WATER_LEVEL)
     {
         Data d;
         d.command = 1;
@@ -61,7 +61,7 @@ void loop()
         sendData(d);
         Serial.println("Turning Pump On");
     }
-    else if (currentWaterLevel >= MAX_WATER_LEVEL)
+    else if (currentWaterLevel <= MAX_WATER_LEVEL)
     {
         Data d;
         d.command = 0;
@@ -70,7 +70,7 @@ void loop()
         Serial.println("Turning Pump Off");
     }
     delay(300);
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 0; i++)
     {
         LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
     }
@@ -89,6 +89,12 @@ void initializeMinMaxDistance()
      * Which is 15 cm for the minimum distance from tank's top which is 5 cm Device height + 10 cm distance
      * and 44 cm for the maximum distance from tank's top which is 5 cm Device height + 39 cm distance
      * */
+    Serial.print("MIN_DISTANCE_1 ");Serial.println(MIN_DISTANCE_1);
+    Serial.print("MIN_DISTANCE_2 ");Serial.println(MIN_DISTANCE_2);
+    Serial.print("MAX_DISTANCE_1 ");Serial.println(MAX_DISTANCE_1);
+    Serial.print("MAX_DISTANCE_2 ");Serial.println(MAX_DISTANCE_2);
+    Serial.print("Tank Height_1 ");Serial.println(TANK_HEIGHT_1);
+    Serial.print("Tank Height_2 ");Serial.println(TANK_HEIGHT_2);
     if (MIN_DISTANCE_1 == 255 && MIN_DISTANCE_2 == 255)
     {
         EEPROM.write(MIN_DISTANCE_ADDRESS_1, 10);
@@ -105,8 +111,8 @@ void initializeMinMaxDistance()
     }
     if (TANK_HEIGHT_1 == 255 && TANK_HEIGHT_2 == 255)
     {
-        EEPROM.write(MIN_DISTANCE_ADDRESS_1, 78);
-        EEPROM.write(MIN_DISTANCE_ADDRESS_2, 0);
+        EEPROM.write(TANK_HEIGHT_ADDRESS_1, 78);
+        EEPROM.write(TANK_HEIGHT_ADDRESS_2, 0);
         TANK_HEIGHT_1 = 78;
         TANK_HEIGHT_2 = 0;
     }
@@ -159,4 +165,5 @@ void sendData(Data ds)
     {
         Serial.println("Send Failed");
     }
+    nrf24.waitPacketSent();
 }
