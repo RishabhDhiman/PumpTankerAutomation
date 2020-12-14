@@ -34,15 +34,11 @@ void checkForData()
             {
                 Serial.print("Turn Off Signal Received ");
                 analogWrite(RELAY_PIN, 0);
-                analogWrite(PUMP_OFF_LED, 255);
-                analogWrite(PUMP_ON_LED, 0);
             }
             else if (((struct Data *)buf)->command == 1)
             {
                 Serial.print("Turn On Signal Received ");
-                analogWrite(6, 255);
-                analogWrite(PUMP_ON_LED, 255);
-                analogWrite(PUMP_OFF_LED, 0);
+                analogWrite(RELAY_PIN, 255);
             }
         }
         else
